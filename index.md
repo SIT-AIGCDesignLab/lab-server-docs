@@ -31,8 +31,8 @@ You can tell where you are from the prompt:
 
 Before you start, Shaun (the server admin) sends you:
 
-1. A **Tailscale invitation** email.
-2. Your **username** and **password** for the server.
+1. A **Tailscale share invitation** email for the server.
+2. Your **username** on the server.
 3. The **name of your container** (called `<container>` below).
 4. The **folder you can access** inside it (called `/workspace/<folder>` below).
 
@@ -48,13 +48,33 @@ No SSH key is needed. Tailscale handles the connection.
 
 ## Step 2: Log in to the server
 
-Open a terminal on your laptop and run:
+Open a terminal on your laptop and run (replace `<username>` with yours):
 
 ```bash
-ssh <username>@rtx-pro-6000-blackwell
+ssh <username>@rtx-pro-6000-blackwell.tail302270.ts.net
 ```
 
-Enter your password when asked. The first time, Tailscale may also ask you to approve the login in your browser.
+Use the **full name** above. The short name `rtx-pro-6000-blackwell` does not work on your laptop, because the server is shared with you from another Tailscale network, and Tailscale only resolves shared machines by their full name.
+
+The first time, Tailscale may show a link or open your browser to approve the login. Approve it with the same account you use for Tailscale. No password or SSH key is needed.
+
+If something goes wrong:
+
+| You see | What to do |
+|---|---|
+| `Could not resolve hostname` | Check Tailscale is switched on and the name is typed in full. |
+| `Operation timed out` | Your access is not set up yet. Send Shaun the exact error. |
+| `Permission denied (tailscale)` | Your access is not set up yet. Send Shaun the exact error. |
+
+**Optional shortcut:** to type less, add this to `~/.ssh/config` on your laptop (create the file if needed):
+
+```text
+Host blackwell
+    HostName rtx-pro-6000-blackwell.tail302270.ts.net
+    User <username>
+```
+
+Then `ssh blackwell` does the same thing, and VS Code lists `blackwell` in Step 4.
 
 A successful login ends with the host prompt:
 
@@ -99,21 +119,15 @@ Working in VS Code is much easier than a plain terminal. It has two parts: conne
 ### 4a. Connect VS Code to the server
 
 1. In VS Code, install the **Remote - SSH** extension (`ms-vscode-remote.remote-ssh`).
-2. On your laptop, add this to the file `~/.ssh/config` (create it if it does not exist). Replace `<username>` with yours:
+2. Open the Command Palette (`Cmd/Ctrl + Shift + P`) and run **Remote-SSH: Connect to Host**.
+3. Type `<username>@rtx-pro-6000-blackwell.tail302270.ts.net` and press Enter. (If you added the optional shortcut in Step 2, just choose `blackwell`.)
+4. If Tailscale shows an approval link, open it and approve.
 
-   ```text
-   Host blackwell
-       HostName rtx-pro-6000-blackwell
-       User <username>
-   ```
-
-3. Open the Command Palette (`Cmd/Ctrl + Shift + P`), run **Remote-SSH: Connect to Host**, choose `blackwell`, and enter your password.
-
-The bottom-left corner of VS Code now shows `SSH: blackwell`.
+The bottom-left corner of VS Code now shows `SSH:` followed by the server name.
 
 ### 4b. Install the container extension on the server
 
-While connected to `blackwell`, open the Extensions panel and install **Container Tools** (by Microsoft). Make sure it appears under **SSH: BLACKWELL - INSTALLED**, not only under Local.
+While connected to the server, open the Extensions panel and install **Container Tools** (by Microsoft). Make sure it appears under the **SSH: … - INSTALLED** section (the server), not only under Local. The screenshot uses the `blackwell` shortcut name.
 
 ![Container Tools installed under SSH: BLACKWELL](images/install-extension.png)
 
@@ -132,10 +146,10 @@ Only attach to **your own** container. Do not stop, restart, or remove any conta
 ## Quick recap
 
 1. Tailscale on.
-2. `ssh <username>@rtx-pro-6000-blackwell`
+2. `ssh <username>@rtx-pro-6000-blackwell.tail302270.ts.net`
 3. `docker exec -it <container> /bin/bash`
 4. Work only inside the container (`/workspace/<folder>#` prompt).
-5. Or in VS Code: connect to `blackwell` → Containers → right-click your container → **Attach Visual Studio Code**.
+5. Or in VS Code: connect to `<username>@rtx-pro-6000-blackwell.tail302270.ts.net` → Containers → right-click your container → **Attach Visual Studio Code**.
 
 ## Need help?
 
